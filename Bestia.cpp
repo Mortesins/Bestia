@@ -30,16 +30,6 @@ Bestia::Bestia(bool d, bool assoPrima, bool briscolaSeconda, unsigned n, unsigne
 				break;
 		}
    }
-		
-   /*Giocatore* g2 = new Bruno("Tizio",assoDiPrima,secondaBriscola);
-   Giocatore* g3 = new Bruno("Caio",assoDiPrima,secondaBriscola);
-   Giocatore* g4 = new Bruno("Sempronio",assoDiPrima,secondaBriscola);
-   
-   tavolo.posizionaGiocatore(g,0);
-   tavolo.posizionaGiocatore(g2,1);
-   tavolo.posizionaGiocatore(g3,2);
-   tavolo.posizionaGiocatore(g4,3);
-   */
    tavolo.daiSoldiGiocatore(0,150);
    tavolo.daiSoldiGiocatore(1,150);
    tavolo.daiSoldiGiocatore(2,150);
@@ -61,6 +51,7 @@ void Bestia::run()
          //giro
       //dividere soldi
    int diMano = -1; // quello dopo il dealer
+   unsigned diManoOld;
    while (true)
    {
       tavolo.resetMucchio();
@@ -70,64 +61,67 @@ void Bestia::run()
       tavolo.mettiBestiaSoldi();
       //
       // DISTRIBUISCI CARTE
+      // reset player status and briscola
+      tavolo.resetPlayersStatus();
+      tavolo.resetBriscola();
       for (unsigned i = 0; i < numGiocatori; i++)
          tavolo.distribuisciCarte(i);
       tavolo.setBriscola();
       // 
       cout << tavolo;
       // BUSSARE
+      cout << "BUSSARE: " << endl;
       diMano = tavolo.chiGioca(debug);
+      tavolo.printPlayersInPlay();
       //
       if (diMano != -1) // se diMano == -1 nessuno gioca
       {
          //ANDARE AL BUIO
          tavolo.chiVaAlBuio(diMano);
+	 tavolo.printPlayersInPlay();
          // se un solo giocatore finisce lì
          if (tavolo.numGiocatoriInGioco() == 1)
          {
-			cout << "giocatori in gioco: " << tavolo.numGiocatoriInGioco() << endl;
-			tavolo.vincitoreIncontrastato();
-		 }
-		 else
-		 {
-			 // GIOCARE
-			 for (unsigned i = 0; i < 3; i++) // 3 giri
-			 {
-				//tavolo.stampaBriscola();
-				///cout << "tavolo.giro(diMano);" << endl;
-				tavolo.giro(debug,diMano);
-				
-				///cout << "tavolo.stampaCarteGiocate;" << endl;
-				tavolo.stampaCarteGiocate();
-				
-				///cout << "tavolo.stampaPozzo;" << endl;
-				//tavolo.stampaPozzo();
-				
-				///cout << "tavolo.chiudiGiro;" << endl;
-				diMano = tavolo.chiudiGiro(diMano);
-				
-				// stampare
-				for (unsigned i = 0; i < tavolo.NUMGIOCATORI; i++)
-				{
-				   tavolo.getPlayerName(i);
-				   cout << endl;
-				   tavolo.getPlayerStatus(i);
-				   cout << endl;
-				}
-				// fine stampare
-			 }
-		 }
+	    cout << "giocatori in gioco: " << tavolo.numGiocatoriInGioco() << endl;
+	    tavolo.vincitoreIncontrastato();
+	 }
+	 else
+	 {
+	    // GIOCARE
+	    for (unsigned i = 0; i < 3; i++) // 3 giri
+	    {
+	       //tavolo.stampaBriscola();
+	       ///cout << "tavolo.giro(diMano);" << endl;
+	       tavolo.giro(debug,diMano);
+
+	       ///cout << "tavolo.stampaCarteGiocate;" << endl;
+	       tavolo.stampaCarteGiocate(diMano);
+
+	       ///cout << "tavolo.stampaPozzo;" << endl;
+	       //tavolo.stampaPozzo();
+
+	       ///cout << "tavolo.chiudiGiro;" << endl;
+	       diManoOld = diMano;
+	       diMano = tavolo.chiudiGiro(diMano);
+
+	       // stampare prese
+	       tavolo.printPresePlayersInPlay(diManoOld);
+	       // fine stampare
+	    }
+	 }
          //
          // DIVIDERE SOLDI
          tavolo.dividereSoldiEBestia();
          //
+	 cout << "*** RESULTS ***" << endl;
+	 tavolo.printPlayersInPlayPreseBestia();
       }
       else
       {
-		  // nessuno gioca
-		  //togliere briscola
-		  tavolo.resetBriscola();
-	  }
+	 // nessuno gioca
+	 //togliere briscola
+	 tavolo.resetBriscola();
+      }
       cout << "***************************************************************" << endl;
    }
    return;

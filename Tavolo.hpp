@@ -61,6 +61,7 @@ class Tavolo
    void vincitoreIncontrastato();
    void dividereSoldiEBestia(); 
    void resetBriscola();
+   void resetPlayersStatus();
    void giro(bool debug, int chiComincia = -1);  //di default parte il dealer
    void resetMucchio();
 
@@ -68,11 +69,16 @@ class Tavolo
    void setInGioco(unsigned i); //{ giocatori[i].inGioco = true; return; } // PRIVATE
    
    /***** GET & PRINT *****/
-   void getPlayerStatus(unsigned giocatoreIndex); 
-   void getPlayerName(unsigned giocatoreIndex); 
+   void printPlayerStatus(unsigned giocatoreIndex); 
+   void printPlayerName(unsigned giocatoreIndex); 
+   void printPlayerInPlay(unsigned giocatoreIndex);
+   void printPlayersInPlay();
+   void printPresePlayersInPlay(unsigned index);
+   void printPlayersInPlayPreseBestia();
    void stampaMucchio(); 
    void stampaPozzo(); 
-   void stampaCarteGiocate(int giocatoreDiMano = -1); // se -1 non segna 
+   void stampaCarteGiocate();
+   void stampaCarteGiocate(int index); 
    void stampaBriscola(); 
    unsigned getDealer(); 
    unsigned numGiocatoriInGioco();

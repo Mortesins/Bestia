@@ -177,6 +177,7 @@ void Tavolo::setBriscola()
 int Tavolo::chiGioca(bool debug, int chiComincia)
 {
    unsigned index;
+   vector <unsigned> indicesPlayersAnswered;
    int primo = -1;
    if ( (chiComincia < 0) && (chiComincia >= NUMGIOCATORI) )
       index = next(dealer);
@@ -186,12 +187,26 @@ int Tavolo::chiGioca(bool debug, int chiComincia)
    {
       if (giocatori[index].giocatore->type == "umano")
       {
-         for (unsigned j = 0; j < NUMGIOCATORI; j++)
+         for (unsigned j = 0; j < indicesPlayersAnswered.size(); j++)
          {
-            getPlayerName(j);
-            cout << endl;
-            getPlayerStatus(j);
-            cout << endl;
+            printPlayerInPlay(indicesPlayersAnswered[j]);
+         }
+         // giocatori che non hanno ancora risposto
+         unsigned tmpIndex;
+         if (indicesPlayersAnswered.size() > 0) // qualcuno ha risposto
+         {
+            tmpIndex = indicesPlayersAnswered[indicesPlayersAnswered.size()-1];
+            tmpIndex = next(tmpIndex);
+         }
+         else // nessuno ha rispoto, quindi comincio con l'index normale
+         {
+            tmpIndex = index;
+         }
+         for (unsigned j = 0; j < NUMGIOCATORI - indicesPlayersAnswered.size(); j++)
+         {
+            printPlayerName(tmpIndex);
+            cout << ": ???" << endl;
+            tmpIndex = next(tmpIndex);
          }
       }
       if (debug)
@@ -206,6 +221,8 @@ int Tavolo::chiGioca(bool debug, int chiComincia)
       {
          giocatori[index].giocatore->scartaTutto();
       }
+      // add index to indices of players that have answered
+      indicesPlayersAnswered.push_back(index);
       index = next(index);
    }
    return primo;
@@ -235,16 +252,6 @@ void Tavolo::chiVaAlBuio(int primo)
       index = next(primo); //perchè il primo è in gioco quindi non deve andare al buio
    for (unsigned i = 0; i < NUMGIOCATORI - 1; i++) // NUMGIOCATORI -1 perchè il giocatore in gioco non lo ciclo
    {
-      if (giocatori[index].giocatore->type == "umano")
-      {
-         for (unsigned j = 0; j < NUMGIOCATORI; j++)
-         {
-            getPlayerName(j);
-            cout << endl;
-            getPlayerStatus(j);
-            cout << endl;
-         }
-      }
       if (i == NUMGIOCATORI - 2) // l'ultimo giro il giocatore è ultimo, perchè ciclo NUMGIOCATORI-1 perchè quello che è in gioco non lo ciclo
          ultimo = true;
       if (!(giocatori[index].inGioco))
@@ -282,7 +289,7 @@ void Tavolo::giocaCarta(unsigned giocatoreIndex, unsigned diMano, bool debug)
    // if giocatore umano stampa carte in gioco
    if (giocatori[giocatoreIndex].giocatore->type == "umano")
    {
-      stampaCarteGiocate();
+      stampaCarteGiocate(diMano);
    }
    Carta* c = giocatori[giocatoreIndex].giocatore->giocaCarta(diMano,briscola,carteGiocate,ultimo,giocatoreIndex,debug);
    if (carteGiocate[giocatoreIndex] == NULL)
@@ -413,13 +420,18 @@ void Tavolo::dividereSoldiEBestia()
          {
             daiSoldiGiocatore(i,share*giocatori[i].numPrese);
             pot -= share*giocatori[i].numPrese;
-            giocatori[i].numPrese = 0; //RESET
          }
-         giocatori[i].inGioco = 0; //RESET
       }
    }
-   // RESET BRISCOLA
-   briscola = NULL;
+}
+
+void Tavolo::resetPlayersStatus()
+{
+   for (unsigned i = 0; i < NUMGIOCATORI; i++)
+   {
+      giocatori[i].numPrese = 0; //RESET
+      giocatori[i].inGioco = 0; //RESET
+   }
 }
 
 void Tavolo::resetBriscola()
@@ -511,32 +523,95 @@ unsigned Tavolo::numGiocatoriInGioco()
    return n;
 }
 
-void Tavolo::getPlayerName(unsigned giocatoreIndex)
+void Tavolo::printPlayerName(unsigned giocatoreIndex)
 {
    cout << giocatoreIndex + 1 << ") " << giocatori[giocatoreIndex].giocatore->getName();
 }
 
-void Tavolo::getPlayerStatus(unsigned giocatoreIndex)
+void Tavolo::printPlayerStatus(unsigned giocatoreIndex)
 {
    cout << "Bestia: " << giocatori[giocatoreIndex].inBestia << "; ";
    cout << "In gioco: " << giocatori[giocatoreIndex].inGioco << "; ";
    cout << "Prese: " << giocatori[giocatoreIndex].numPrese;
    return;
-   
 }
 
-void Tavolo::stampaCarteGiocate(int giocatoreDiMano)
+void Tavolo::printPlayerInPlay(unsigned giocatoreIndex)
+{
+   printPlayerName(giocatoreIndex);
+   cout << ": ";
+   if (giocatori[giocatoreIndex].inGioco)
+   {
+      cout << "gioca" << endl;
+   }
+   else
+   {
+      cout << "non gioca" << endl;
+   }
+}
+
+void Tavolo::printPlayersInPlay()
+{
+   // print players in play
+   cout << "CHI GIOCA: " << endl;
+   for (unsigned i = 0; i < NUMGIOCATORI; i++)
+   {
+      printPlayerInPlay(i);
+   }
+}
+
+void Tavolo::printPresePlayersInPlay(unsigned index)
+{
+   for (unsigned i = 0; i < NUMGIOCATORI; i++)
+   {
+      if (giocatori[index].inGioco)
+      {
+         printPlayerName(index);
+         cout << ": Prese: " << giocatori[index].numPrese << endl;
+      }
+      index = next(index);
+   }  
+}
+
+void Tavolo::printPlayersInPlayPreseBestia()
+{
+   for (unsigned i = 0; i < NUMGIOCATORI; i++)
+   {
+      if (giocatori[i].inGioco)
+      {
+         printPlayerName(i);
+         cout << ": Prese: " << giocatori[i].numPrese;
+         cout << "; Bestia: " << giocatori[i].inBestia << endl;
+      }
+   }  
+}
+
+void Tavolo::stampaCarteGiocate()
 {
    cout << "CARTE GIOCATE:" << endl;
    for (unsigned i = 0; i < NUMGIOCATORI; i++)
    {
       if (carteGiocate[i] != NULL)
-         if (i == giocatoreDiMano)
-            cout << "\t" << i+1 << ") " << *(carteGiocate[i]) << " *" << endl;
-         else
-            cout << "\t" << i+1 << ") " << *(carteGiocate[i]) << endl;
+         cout << "\t" << i+1 << ") " << *(carteGiocate[i]) << endl;
       else
          cout << "\t" << i+1 << ") VUOTO" << endl;
+   }
+   return;
+}
+
+void Tavolo::stampaCarteGiocate(int index)
+{
+   cout << "CARTE GIOCATE:" << endl;
+   for (unsigned i = 0; i < NUMGIOCATORI; i++)
+   {
+      if (giocatori[index].inGioco)
+      {
+         if (carteGiocate[index] != NULL)
+            cout << "\t" << index+1 << ") " << *(carteGiocate[index]) << endl;
+         else
+            cout << "\t" << index+1 << ") VUOTO" << endl;
+      }
+      index = next(index);
    }
    return;
 }
