@@ -89,9 +89,9 @@ ostream& operator<<(ostream& os, const Giocatore& g)
 	   for (unsigned i = 0; i < 3; i++)
 	   {
 		  if (g.carte[i] != NULL)
-			 os << "\t" << i << ") " << *(g.carte[i]) << endl;
+			 os << "\t" << i+1 << ") " << *(g.carte[i]) << endl;
 		  else
-			 os << "\t" << i << ") VUOTO" << endl;
+			 os << "\t" << i+1 << ") VUOTO" << endl;
 	   }
    }
    return os;   

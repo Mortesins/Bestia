@@ -3,7 +3,7 @@
 
 using namespace std;
 
-#include "GiocatoriDerivati.hpp"
+#include "Giocatore.hpp"
 #include "Mazzo.hpp"
 #include "Carta.hpp"
 #include "random.hpp"

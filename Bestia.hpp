@@ -4,6 +4,13 @@
 using namespace std;
 
 #include "Tavolo.hpp"
+#include "AI.hpp"
+#include "GiocatoreUmano.hpp"
+#include "AIs/Bruno.hpp"
+#include "AIs/Blind.hpp"
+#include "AIs/Loose.hpp"
+#include "AIs/Robin.hpp"
+#include "AIs/Tight.hpp"
 
 class Bestia
 {

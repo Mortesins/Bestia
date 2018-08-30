@@ -15,7 +15,7 @@ class Giocatore
   protected:
    const string nome;
    const string type;
-   int soldi;
+   unsigned soldi;
    Carta* carte[3];
   public:
    Giocatore(string name);
