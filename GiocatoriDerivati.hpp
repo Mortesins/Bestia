@@ -42,26 +42,16 @@ class AI: public Giocatore
    unsigned cartaDaButtarVia(); //la più bassa del seme in cui ho più carte
    
    int cercaCarta(char v, char s);
-   // PRIVATE
 
   public:
-   AI(string name, bool assoPrima=true, bool briscolaSeconda=true);
+   AI(string name, string type="AI", bool assoPrima=true, bool briscolaSeconda=true);
    ~AI();
    
-   //virtual bool bussareOno(const Carta* briscola) = 0; //=0 for pure
-   //virtual bool vadoAlBuio(unsigned pot, bool nessunoAndato, bool ultimo, unsigned posto);
    Carta* giocaCarta(unsigned diMano, const Carta* briscola, const vector <Carta*> carteGiocate, bool ultimo, unsigned posto, bool debug); 
    
    char palo(unsigned diMano, const vector <Carta*> carteGiocate); //non controlla che sia stata giocata la carta del giocatore di mano
    char valoreVincente(unsigned diMano, const Carta* briscola, const vector <Carta*> carteGiocate);
    bool briscolaGiocata(const Carta* briscola, const vector <Carta*> carteGiocate);
-
-/*** SPOSTATO IN CARTA
-   static bool aMINOREb(char a, char b);
-   static bool aMAGGIOREb(char a, char b);
-   
-   static unsigned ilTerzoNumero(unsigned a, unsigned b); 
-   * **/
 };
 
 class Bruno: public AI
@@ -101,7 +91,7 @@ class Loose: public AI
       ~Loose();
    
       bool bussareOno(const Carta* briscola);
-      bool vadoAlBuio(unsigned pot, bool nessunoAndato, bool ultimo, unsigned posto) ;
+      bool vadoAlBuio(unsigned pot, bool nessunoAndato, bool ultimo, unsigned posto);
 };
 
 class Robin: public AI
@@ -111,7 +101,7 @@ class Robin: public AI
       ~Robin();
    
       bool bussareOno(const Carta* briscola);
-      bool vadoAlBuio(unsigned pot, bool nessunoAndato, bool ultimo, unsigned posto) ;
+      bool vadoAlBuio(unsigned pot, bool nessunoAndato, bool ultimo, unsigned posto);
 };
 
 #endif

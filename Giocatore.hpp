@@ -14,14 +14,16 @@ class Giocatore
    friend ostream& operator<<(ostream& os,const Giocatore& g);
   protected:
    const string nome;
+   const string type;
    int soldi;
-   Carta* carte[3]; //vector <Carta*> carte;
+   Carta* carte[3];
   public:
    Giocatore(string name);
+   Giocatore(string name, string type);
    virtual ~Giocatore();
-   string type;
       
    string getName() const { return nome; };
+   string getType() const { return type; };
    int getSoldi() const { return soldi; };
    Carta* getCartaPointer(unsigned i) const { return carte[i]; };
    
@@ -31,8 +33,6 @@ class Giocatore
    void scartaTutto();
    bool riceviCarta(Carta* cp);
    
-   //virtual bool bussareOno() = 0; // = 0 for pure
-   //virtual bool vadoAlBuio() = 0; // = 0 for pure
    virtual bool bussareOno(const Carta* briscola) = 0; // = 0 for pure
    virtual bool vadoAlBuio(unsigned pot, bool nessunoAndato, bool ultimo, unsigned posto) = 0; // = 0 for pure
    virtual Carta* giocaCarta(unsigned diMano, const Carta* briscola, const vector <Carta*> carteGiocate, bool ultimo, unsigned posto, bool debug) = 0; // = 0 for pure // OK

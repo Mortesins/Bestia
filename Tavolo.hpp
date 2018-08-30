@@ -35,12 +35,14 @@ class Tavolo
    unsigned pot;
    unsigned bestiaMoney;
    int dealer;
+   const unsigned NUMGIOCATORI;
+   const unsigned DEALERMONEY;
    
    unsigned next(unsigned i);
    void daiCarta(unsigned posto, int resetSeed); 
+   void setNumPrese(unsigned i, unsigned prese);
+   void setInGioco(unsigned i);
   public:
-   const unsigned NUMGIOCATORI; //PERCHE' PUBLIC????
-   const unsigned DEALERMONEY; //PERCHE' PUBLIC????
    Tavolo(unsigned n, unsigned dm);
    ~Tavolo();
    
@@ -64,9 +66,6 @@ class Tavolo
    void resetPlayersStatus();
    void giro(bool debug, int chiComincia = -1);  //di default parte il dealer
    void resetMucchio();
-
-   void setNumPrese(unsigned i, unsigned prese);// { giocatori[i].numPrese = prese; return; } //PRIVATE
-   void setInGioco(unsigned i); //{ giocatori[i].inGioco = true; return; } // PRIVATE
    
    /***** GET & PRINT *****/
    void printPlayerStatus(unsigned giocatoreIndex); 

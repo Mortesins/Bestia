@@ -1,9 +1,8 @@
 #include "GiocatoriDerivati.hpp"
 
 GiocatoreUmano::GiocatoreUmano(string name, bool assoPrima, bool briscolaSeconda)
-   :Giocatore(name),assoDiPrima(assoPrima),secondaBriscola(briscolaSeconda)
+   :Giocatore(name,"umano"),assoDiPrima(assoPrima),secondaBriscola(briscolaSeconda)
 {
-   type = "umano";
 }
 
 GiocatoreUmano::~GiocatoreUmano()
@@ -75,7 +74,7 @@ Carta* GiocatoreUmano::giocaCarta(unsigned diMano, const Carta* briscola, const 
                cout << i << ") " << *(carte[i]) << endl;
             }
          }
-         unsigned a;
+         int a;
          cin >> a;
          while (a != hoAssoBriscola)
          {
@@ -307,10 +306,14 @@ Carta* GiocatoreUmano::giocaCarta(unsigned diMano, const Carta* briscola, const 
 
 // DA CONTROLLARE
 
-AI::AI(string name, bool assoPrima, bool briscolaSeconda)
-   :Giocatore(name),assoDiPrima(assoPrima),secondaBriscola(briscolaSeconda)
+//AI::AI(string name, bool assoPrima, bool briscolaSeconda)
+   //:Giocatore(name,"AI"),assoDiPrima(assoPrima),secondaBriscola(briscolaSeconda)
+//{
+//}
+
+AI::AI(string name, string type, bool assoPrima, bool briscolaSeconda)
+   :Giocatore(name,type),assoDiPrima(assoPrima),secondaBriscola(briscolaSeconda)
 {
-   type = "AI";
 }
 
 AI::~AI()
@@ -332,7 +335,7 @@ Carta* AI::giocaCarta(unsigned diMano, const Carta* briscola, const vector <Cart
  * se nessuno ha giocato briscola taglieggio con la più bassa
  ***/
    Carta* cp;
-   unsigned cpIndex;
+   int cpIndex;
    unsigned numCarte = 0;
    for (unsigned i = 0; i < 3; i++)
    {
@@ -360,50 +363,39 @@ Carta* AI::giocaCarta(unsigned diMano, const Carta* briscola, const vector <Cart
             cout << "di mano" << endl;
          if (numCarte == 3)
          { //primo giro
+            // se ho asso di briscola devo giocarlo
+            // se ho 3 di briscola con A sul tavolo, allora devo giocare il 3
             if (debug)
                cout << "primo giro" << endl;
-            int cartaIndex;
+            // se briscola e' Asso, cerco se ho il 3
+            // se no cerco l'Asso
             if (briscola->getValore() == 'A')
             {   // cioè come briscola c'è l'asso, devo giocare il 3
                if (debug)
                   cout << "briscola asso" << endl;
-               cartaIndex = cercaCarta('3',briscola->getSeme());
-               if (cartaIndex != -1)
-               {
-                  cp = carte[cartaIndex];
-                  carte[cartaIndex] = NULL;
-                  return cp;
-               }
-               else
-               {
-                  cpIndex = cartaPiuAltaNonBriscola(briscola->getSeme());
-                  cp = carte[cpIndex];
-                  carte[cpIndex] = NULL;
-                  return cp;
-               }
+               cpIndex = cercaCarta('3',briscola->getSeme());
             }
             else
             {
-               //devo giocare l'asso se ce l'ho, se non ho asso la più alta non briscola
-               cartaIndex = cercaCarta('A',briscola->getSeme());
-               if (cartaIndex != -1)
-               {
-                  cpIndex = cartaIndex;
-                  cp = carte[cpIndex];
-                  carte[cpIndex] = NULL;
-                  return cp;
+               cpIndex = cercaCarta('A',briscola->getSeme());
+            } 
+            // se ho l'asso di briscola o il 3 (quando asso sul tavolo) -> lo gioco
+            if (cpIndex != -1)
+            {
+               cp = carte[cpIndex];
+               carte[cpIndex] = NULL;
+               return cp;
+            }
+            else // se non ho asso di briscola o 3, gioco la carta piu' alta non briscola
+            {     // se tutte briscole, la briscola piu' alta
+               cpIndex = cartaPiuAltaNonBriscola(briscola->getSeme());
+               if (cpIndex == -1)
+               {  //se tutte briscola
+                  cpIndex = cartaPiuAlta(briscola->getSeme());
                }
-               else
-               {
-                  cpIndex = cartaPiuAltaNonBriscola(briscola->getSeme());
-                  if (cpIndex == -1)
-                  {  //se tutte briscola
-                     cpIndex = cartaPiuAlta(briscola->getSeme());
-                  }
-                  cp = carte[cpIndex];
-                  carte[cpIndex] = NULL;
-                  return cp;
-               }
+               cp = carte[cpIndex];
+               carte[cpIndex] = NULL;
+               return cp;
             }
          }
          else
@@ -423,6 +415,7 @@ Carta* AI::giocaCarta(unsigned diMano, const Carta* briscola, const vector <Cart
             {
                if (debug)
                   cout << "non briscola" << endl;
+               // non avendo briscola sicuro "cartaPiuAltaNonBriscola" non mi restituisce -1
                cpIndex = cartaPiuAltaNonBriscola(briscola->getSeme());
                cp = carte[cpIndex];
                carte[cpIndex] = NULL;
@@ -443,6 +436,7 @@ Carta* AI::giocaCarta(unsigned diMano, const Carta* briscola, const vector <Cart
             if (numCartePalo == 1)
             {
                //butto quella
+                  // "cartaPiuAlta" non restituisce -1 perche' ho gia controllato che il seme c'e'
                cpIndex = cartaPiuAlta(paloSeme); // visto che ne ho una sola gioco "la più alta"
                cp = carte[cpIndex];
                carte[cpIndex] = NULL;
@@ -457,6 +451,7 @@ Carta* AI::giocaCarta(unsigned diMano, const Carta* briscola, const vector <Cart
                   if (briscolaGiocata(briscola,carteGiocate) && paloSeme != briscola->getSeme())
                   {
                      //butto la più bassa di quel seme, che tanto non prendo
+                        // "cartaPiuAlta" non restituisce -1 perche' ho gia controllato che il seme c'e'
                      cpIndex = cartaPiuBassa(paloSeme);
                      cp = carte[cpIndex];
                      carte[cpIndex] = NULL;
@@ -573,6 +568,7 @@ Carta* AI::giocaCarta(unsigned diMano, const Carta* briscola, const vector <Cart
                   if (briscolaGiocata(briscola,carteGiocate) && paloSeme != briscola->getSeme())
                   {
                      //butto la più bassa di quel seme, che tanto non prendo
+                        // "cartaPiuBassa" non restituisce -1 perche' ho gia controllato che il seme c'e'
                      cpIndex = cartaPiuBassa(paloSeme);
                      cp = carte[cpIndex];
                      carte[cpIndex] = NULL;
@@ -593,6 +589,7 @@ Carta* AI::giocaCarta(unsigned diMano, const Carta* briscola, const vector <Cart
                      else
                      {
                         // la mia carta più alta non prende quindi butto la più bassa
+                           // "cartaPiuBassa" non restituisce -1 perche' ho gia controllato che il seme c'e'
                         cpIndex = cartaPiuBassa(paloSeme);
                         cp = carte[cpIndex];
                         carte[cpIndex] = NULL;
@@ -612,6 +609,7 @@ Carta* AI::giocaCarta(unsigned diMano, const Carta* briscola, const vector <Cart
             {    // ho briscola
                if (numCarteBriscola == 1)
                {  //butto quella che ho
+                     // "cartaPiuAlta" non restituisce -1 perche' ho gia controllato che il seme c'e'
                   cpIndex = cartaPiuAlta(briscola->getSeme());
                   cp = carte[cpIndex];
                   carte[cpIndex] = NULL;
@@ -619,6 +617,7 @@ Carta* AI::giocaCarta(unsigned diMano, const Carta* briscola, const vector <Cart
                }
                else if (!briscolaGiocata(briscola,carteGiocate))
                {  // se nessuno ha giocato briscola butto la piu piccola
+                     // "cartaPiuBassa" non restituisce -1 perche' ho gia controllato che il seme c'e'
                   cpIndex = cartaPiuBassa(briscola->getSeme());
                   cp = carte[cpIndex];
                   carte[cpIndex] = NULL;
@@ -729,31 +728,6 @@ int AI::cercaCarta(char v, char s) //ritorna l'indice se c'è o -1 se non c'è
 
 int AI::cartaPiuAltaNonBriscola(char briscolaSeme) //non briscola, ritorna -1 se tutto briscola
 {
-   /*unsigned max = 0;
-   bool flag = false; // trovata un carta non di briscola
-   while (!flag && max < 3)
-   {
-      if (carte[max] != NULL)
-      {
-         if (carte[max]->getSeme() == briscolaSeme)
-            max++;
-         else
-            flag = true;
-      }
-   }
-   if (max == 3) // tutto briscola
-      return -1;
-   else if (max == 2) // ho solo la terza carta non briscola
-      return max;
-   for (unsigned i = max + 1; i < 3; i++)
-   {
-      if (carte[i] != NULL)
-      {
-         if ( aMAGGIOREb(carte[i]->getValore(),carte[max]->getValore()) ) //guardo il valore perchè potrebbero non avere lo stesso seme
-            max = i;
-      }
-   }
-   return max;*/
    // metto in un vector gli indici delle carte non briscola
    // trovo la carta maggiore tra quegli indici
    vector <unsigned> indiciNonBriscola;
@@ -974,9 +948,8 @@ unsigned AI::cartaDaButtarVia() //la più bassa del seme in cui ho più carte
 
 /*** BRUNO ***/
 Bruno::Bruno(string name, bool assoPrima, bool briscolaSeconda)
-   :AI(name,assoPrima,briscolaSeconda)
+   :AI(name,"Bruno",assoPrima,briscolaSeconda)
 {
-   type = "Bruno";
 }
 
 Bruno::~Bruno()
@@ -1137,9 +1110,8 @@ bool Bruno::bussareOno(const Carta* briscola)
 
 /*** TIGHT ***/
 Tight::Tight(string name, bool assoPrima, bool briscolaSeconda)
-   :AI(name,assoPrima,briscolaSeconda)
+   :AI(name,"Tight",assoPrima,briscolaSeconda)
 {
-   type = "Tight";
 }
 
 Tight::~Tight()
@@ -1247,9 +1219,8 @@ bool Tight::bussareOno(const Carta* briscola)
 
 /*** BLIND ***/
 Blind::Blind(string name, bool assoPrima, bool briscolaSeconda)
-   :AI(name,assoPrima,briscolaSeconda)
+   :AI(name,"Blind",assoPrima,briscolaSeconda)
 {
-   type = "Blind";
 }
 
 Blind::~Blind()
@@ -1391,9 +1362,8 @@ bool Blind::bussareOno(const Carta* briscola)
 
 /*** LOOSE ***/
 Loose::Loose(string name, bool assoPrima, bool briscolaSeconda)
-   :AI(name,assoPrima,briscolaSeconda)
+   :AI(name,"Loose",assoPrima,briscolaSeconda)
 {
-   type = "Loose";
 }
 
 Loose::~Loose()
@@ -1488,9 +1458,8 @@ bool Loose::bussareOno(const Carta* briscola)
 
 /*** ROBIN ***/
 Robin::Robin(string name, bool assoPrima, bool briscolaSeconda)
-   :AI(name,assoPrima,briscolaSeconda)
+   :AI(name,"Robin",assoPrima,briscolaSeconda)
 {
-   type = "Robin";
 }
 
 Robin::~Robin()

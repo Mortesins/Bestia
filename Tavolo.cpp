@@ -37,7 +37,7 @@ void Tavolo::printPlayersType()
 {
    for (unsigned i = 0; i < 4; i++)
 	{
-		cout << giocatori[i].giocatore->type << endl;
+		cout << giocatori[i].giocatore->getType() << endl;
    }
    return;
 }
@@ -123,7 +123,7 @@ bool Tavolo::mettiSoldiDealer()
    }
    else
    {
-      pot += 15;
+      pot += DEALERMONEY;
       return true;
    }
 }
@@ -185,7 +185,7 @@ int Tavolo::chiGioca(bool debug, int chiComincia)
       index = chiComincia;
    for (unsigned i = 0; i < NUMGIOCATORI; i++)
    {
-      if (giocatori[index].giocatore->type == "umano")
+      if (giocatori[index].giocatore->getType() == "umano")
       {
          for (unsigned j = 0; j < indicesPlayersAnswered.size(); j++)
          {
@@ -287,7 +287,7 @@ void Tavolo::giocaCarta(unsigned giocatoreIndex, unsigned diMano, bool debug)
       i = next(i);
    } 
    // if giocatore umano stampa carte in gioco
-   if (giocatori[giocatoreIndex].giocatore->type == "umano")
+   if (giocatori[giocatoreIndex].giocatore->getType() == "umano")
    {
       stampaCarteGiocate(diMano);
    }
@@ -483,30 +483,6 @@ void Tavolo::daiCarta(unsigned posto, int resetSeed) // if resetSeed < 0 do not 
 
 
 /***** GET & PRINT *****/
-void Tavolo::stampaMucchio()
-{
-   for (unsigned i = 0; i < mucchio.size(); i++)
-   {
-      if (mucchio[i] != NULL)
-         cout << i+1 << ") " << *(mucchio[i]) << endl;
-      else
-         cout << "MANCANTE" << endl;
-   }
-   return;
-}
-
-void Tavolo::stampaPozzo()
-{
-   for (unsigned i = 0; i < pozzo.size(); i++)
-   {
-      if (pozzo[i] != NULL)
-         cout << i+1 << ") " << *(pozzo[i]) << endl;
-      else
-          cout << "MANCANTE" << endl;
-   }
-   return;
-}
-
 unsigned Tavolo::getDealer()
 {
    return dealer;
@@ -625,7 +601,31 @@ void Tavolo::stampaBriscola()
    return;
 }
 
+/*** for testing ***/
+void Tavolo::stampaMucchio()
+{
+   for (unsigned i = 0; i < mucchio.size(); i++)
+   {
+      if (mucchio[i] != NULL)
+         cout << i+1 << ") " << *(mucchio[i]) << endl;
+      else
+         cout << "MANCANTE" << endl;
+   }
+   return;
+}
 
+void Tavolo::stampaPozzo()
+{
+   for (unsigned i = 0; i < pozzo.size(); i++)
+   {
+      if (pozzo[i] != NULL)
+         cout << i+1 << ") " << *(pozzo[i]) << endl;
+      else
+          cout << "MANCANTE" << endl;
+   }
+   return;
+}
+/*******************/
 
 ostream& operator<<(ostream& os,const Tavolo& t)
 {
