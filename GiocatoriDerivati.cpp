@@ -229,11 +229,6 @@ unsigned GiocatoreUmano::loopPerValoreValido(unsigned a)
 
 // DA CONTROLLARE
 
-//AI::AI(string name, bool assoPrima, bool briscolaSeconda)
-   //:Giocatore(name,"AI"),assoDiPrima(assoPrima),secondaBriscola(briscolaSeconda)
-//{
-//}
-
 AI::AI(string name, string type, bool assoPrima, bool briscolaSeconda)
    :Giocatore(name,type),assoDiPrima(assoPrima),secondaBriscola(briscolaSeconda)
 {
@@ -906,11 +901,6 @@ bool Bruno::vadoAlBuio(unsigned pot, bool nessunoAndato, bool ultimo, unsigned p
 
 bool Bruno::bussareOno(const Carta* briscola) 
 {
-   //cout << "bruno" << endl;
-   //char a;
-   //cout << nome << ": bussare? (y/n) " << endl;
-   //cin >> a; 
-   //return ( (a == 'y') || (a == 'Y') );
    char semeBriscola = briscola->getSeme(); 
    /*** se ho l'asso di briscola ***/
    if (cercaCarta('A',semeBriscola) != -1)

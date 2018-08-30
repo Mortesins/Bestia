@@ -154,23 +154,25 @@ bool Tavolo::mettiBestiaSoldi()
 
 void Tavolo::distribuisciCarte(unsigned giocatoreIndex)
 {
-   daiCarta(giocatoreIndex,-1);
-   daiCarta(giocatoreIndex,-2);
-   daiCarta(giocatoreIndex,-3);
+   for (int i = 0; i < 3; i++) 
+   {
+      daiCarta(giocatoreIndex);
+   }
    return;
 }
 
 void Tavolo::setBriscola()
 {
-   int i = randomInterval(0,mucchio.size() - 1);
-   Carta* cp = mucchio[i];
+   Carta* cp = mucchio.back();
    if (briscola == NULL)
    {
       briscola = cp;
-      mucchio.erase(mucchio.begin() + i);
+      mucchio.pop_back();
    }
    else
+   {
       cout << "ERRORE: c'è già una briscola" << endl;
+   }
    return;
 }
 
@@ -440,7 +442,7 @@ void Tavolo::resetBriscola()
    return;
 }
 
-// PRIVATE
+/*** PRIVATE ***/
 unsigned Tavolo::next(unsigned i)
 {
    if (i + 1 == NUMGIOCATORI)
@@ -454,32 +456,29 @@ unsigned Tavolo::next(unsigned i)
       return i + 1;
 }
 
-// DIVENTERA' PRIVATE
 void Tavolo::setNumPrese(unsigned i, unsigned prese) 
 { 
    giocatori[i].numPrese = prese; 
    return; 
 } 
 
-// DIVENTERA' PRIVATE
 void Tavolo::setInGioco(unsigned i)
 { 
    giocatori[i].inGioco = true;
    return; 
 }
 
-// PRIVATE
-void Tavolo::daiCarta(unsigned posto, int resetSeed) // if resetSeed < 0 do not reset
+void Tavolo::daiCarta(unsigned posto)
 {
-   int i = randomInterval(0,mucchio.size() - 1, posto*resetSeed + resetSeed); //posto per il seed, il + è per quando posto = 0
-   Carta* cp = mucchio[i];
+   Carta* cp = mucchio.back();
    bool messaCarta = (giocatori[posto].giocatore)->riceviCarta(cp);
    if (messaCarta)
-      mucchio.erase(mucchio.begin() + i);
+      mucchio.pop_back();
    else
       cout << "ERRORE: troppe carte" << endl;
    return;
 }
+/***************/
 
 
 /***** GET & PRINT *****/

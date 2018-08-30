@@ -46,7 +46,6 @@ void Giocatore::stampaCarte() const
 void Giocatore::versaSoldi(unsigned s)
 {
    soldi -= s;
-   //versare a chi?
    return;
 }
 

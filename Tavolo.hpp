@@ -39,7 +39,7 @@ class Tavolo
    const unsigned DEALERMONEY;
    
    unsigned next(unsigned i);
-   void daiCarta(unsigned posto, int resetSeed); 
+   void daiCarta(unsigned posto); 
    void setNumPrese(unsigned i, unsigned prese);
    void setInGioco(unsigned i);
   public:
