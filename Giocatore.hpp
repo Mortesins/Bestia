@@ -12,23 +12,30 @@ using namespace std;
 class Giocatore
 {
    friend ostream& operator<<(ostream& os,const Giocatore& g);
-  private:
+  protected:
    const string nome;
-   unsigned soldi;
+   int soldi;
    Carta* carte[3]; //vector <Carta*> carte;
   public:
    Giocatore(string name);
+   virtual ~Giocatore();
+   string type;
+      
    string getName() const { return nome; };
-   unsigned getSoldi() const { return soldi; };
+   int getSoldi() const { return soldi; };
    Carta* getCartaPointer(unsigned i) const { return carte[i]; };
    
    void versaSoldi(unsigned soldi);
-   void giocaCarta(unsigned i);
+   void riceviSoldi(unsigned soldi);
+   Carta* giocaCarta(unsigned i); // for testing
    void scartaTutto();
-   void riceviCarta(Carta* cp);
+   bool riceviCarta(Carta* cp);
    
-   virtual void scegliCartaDaGiocare() { cout << "scegliCartaDaGiocare: virtual. Da fare" << endl; };
-   
+   //virtual bool bussareOno() = 0; // = 0 for pure
+   //virtual bool vadoAlBuio() = 0; // = 0 for pure
+   virtual bool bussareOno(const Carta* briscola) = 0; // = 0 for pure
+   virtual bool vadoAlBuio(unsigned pot, bool nessunoAndato, bool ultimo, unsigned posto) = 0; // = 0 for pure
+   virtual Carta* giocaCarta(unsigned diMano, const Carta* briscola, const vector <Carta*> carteGiocate, bool ultimo, unsigned posto, bool debug) = 0; // = 0 for pure // OK
    
    void stampaCarte() const;
 };

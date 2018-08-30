@@ -11,9 +11,10 @@ class Mazzo
 {
    friend ostream& operator<<(ostream& os, const Mazzo& m);
   private:
-   Carta* mazzo[40];//vector
+   Carta* mazzo[40];
   public:
    Mazzo();
+   ~Mazzo();
    Carta* getCartaPointer(char s, char v) const;
    Carta* getCartaPointer(unsigned i) const;
 };

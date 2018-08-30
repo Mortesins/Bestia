@@ -77,6 +77,12 @@ Mazzo::Mazzo()
    j++;
 }
 
+Mazzo::~Mazzo()
+{
+   for (unsigned i = 0; i < 40; i++)
+      delete mazzo[i];
+}
+
 Carta* Mazzo::getCartaPointer(char s, char v) const
 {
    for (unsigned i = 0; i < 40; i++)
@@ -89,7 +95,7 @@ Carta* Mazzo::getCartaPointer(char s, char v) const
 
 Carta* Mazzo::getCartaPointer(unsigned i) const
 {
-   if (i > 0 && i < 40)
+   if (i >= 0 && i < 40)
       return mazzo[i];
    else
       return NULL;

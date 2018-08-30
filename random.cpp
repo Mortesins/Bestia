@@ -6,9 +6,10 @@ double randomDouble()
    return (rand() / (double)RAND_MAX);
 }
 
-int randomInterval(int a, int b, int extraSeed)
+int randomInterval(int a, int b, int extraSeed) // if seed negative don't srand
 {
-   srand((unsigned)time(0)+extraSeed);
+   if (extraSeed >= 0)
+      srand((unsigned)(time(0)+extraSeed));
    double r = rand() / (double)RAND_MAX;
    int interval = b - a + 1;
    return (a + (int)(interval*r));

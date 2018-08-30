@@ -8,16 +8,15 @@ using namespace std;
 class Bestia
 {
   private:
-   Tavolo tavolo;
    const bool assoDiPrima;
    const bool secondaBriscola;
-   const bool briscolaPiuAlta;
    const unsigned numGiocatori;
    const unsigned ante;
+   Tavolo tavolo;
+   const bool debug;
   public:
-   Bestia(bool assoPrima, bool briscolaSeconda, bool briscolaAlta, unsigned n, unsigned a);
+   Bestia(bool debug = false, bool assoPrima = true, bool briscolaSeconda = true, unsigned n = 4, unsigned a = 15);
+      // d = debug, n = numero giocatori, a = ante
    void run();
-   void mettereSoldi();
-   void distribuisciCarte();
 };
 #endif

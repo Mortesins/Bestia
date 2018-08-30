@@ -3,53 +3,79 @@
 
 using namespace std;
 
-#include "Giocatore.hpp"
+#include "GiocatoriDerivati.hpp"
 #include "Mazzo.hpp"
 #include "Carta.hpp"
 #include "random.hpp"
 #include <vector>
 
-const unsigned NUMGIOCATORI = 4;
-
 //////
       class ContainerGiocatore
       {
         public:
-         ContainerGiocatore() { giocatore = NULL; inBestia = false;}
+         ContainerGiocatore() { giocatore=NULL; inBestia=false; inGioco=false; numPrese=0; }
+         ~ContainerGiocatore() { delete giocatore; }
          Giocatore* giocatore;
          bool inBestia;
+         bool inGioco;
+         unsigned numPrese;
       };
 //////
 
 class Tavolo
 {
-   friend ostream& operator<<(ostream& os, Tavolo t);
+   friend ostream& operator<<(ostream& os,const Tavolo& t);
   private:
-   ContainerGiocatore giocatori[NUMGIOCATORI];
-   Carta* carteGiocate[NUMGIOCATORI];
-   vector <Carta*> pozzo;
+   vector <ContainerGiocatore> giocatori;
+   vector <Carta*> carteGiocate;
    vector <Carta*> mucchio; 
+   vector <Carta*> pozzo; 
    const Mazzo mazzo;
    Carta* briscola;
    unsigned pot;
+   unsigned bestiaMoney;
    int dealer;
+   
+   unsigned next(unsigned i);
+   void daiCarta(unsigned posto, int resetSeed); 
   public:
-   Tavolo();
-   void posizionaGiocatore(Giocatore* g, int posto = -1); // OK // posto = -1 significa RANDOM
-   void daiCarta(unsigned posto);
-   void setDealer(); // OK
-   void mettiSoldiDealer();
-   void distribuisciCarte(unsigned giocatoreIndex);
-   void setBriscola();
-   void chiGioca();
-   void prova();
-   void chiVaAlBuio();
-   void daiSoldiGiocatore(unsigned giocatoreIndex);
-   void giocaCarta(unsigned giocatoreIndex);
-   void chiHaVinto();
-   void dividereSoldiEBestia();
-   void mettiBestiaSoldi();
-   void stampaMucchio();
-   unsigned getDealer(); // OK
+   const unsigned NUMGIOCATORI; //PERCHE' PUBLIC????
+   const unsigned DEALERMONEY; //PERCHE' PUBLIC????
+   Tavolo(unsigned n, unsigned dm);
+   ~Tavolo();
+   
+   void printPlayersType();
+   void posizionaGiocatore(Giocatore* g, int posto = -1);  // posto = -1 significa RANDOM
+   void setDealer(); 
+   bool mettiSoldiDealer();  //andato a buon fine? BOOL
+   bool mettiBestiaSoldi(); // andato a buon fine? BOOL
+   void daiSoldiGiocatore(unsigned giocatoreIndex, unsigned soldi); 
+   void distribuisciCarte(unsigned giocatoreIndex); 
+   void setBriscola(); 
+   
+   int chiGioca(bool debug, int chiComincia = -1); //di default parte quello dopo il dealer // return -1 se nessuno gioca
+   void chiVaAlBuio(int primo = -1); //di default parte quello dopo il dealer
+   void giocaCarta(unsigned giocatoreIndex, unsigned diMano, bool debug); 
+   
+   unsigned chiudiGiro(int chiComincia = -1 );  //di default parte il dealer // ritorna chi ha vinto
+   void vincitoreIncontrastato();
+   void dividereSoldiEBestia(); 
+   void resetBriscola();
+   void giro(bool debug, int chiComincia = -1);  //di default parte il dealer
+   void resetMucchio();
+
+   void setNumPrese(unsigned i, unsigned prese);// { giocatori[i].numPrese = prese; return; } //PRIVATE
+   void setInGioco(unsigned i); //{ giocatori[i].inGioco = true; return; } // PRIVATE
+   
+   /***** GET & PRINT *****/
+   void getPlayerStatus(unsigned giocatoreIndex); 
+   void getPlayerName(unsigned giocatoreIndex); 
+   void stampaMucchio(); 
+   void stampaPozzo(); 
+   void stampaCarteGiocate(int giocatoreDiMano = -1); // se -1 non segna 
+   void stampaBriscola(); 
+   unsigned getDealer(); 
+   unsigned numGiocatoriInGioco();
+   /***** \\GET & PRINT *****/
 };
 #endif
